@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Note Summarizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #00F5A0;
+            --secondary: #00D9F5;
+            --accent: #FF2E63;
+            --dark: #1A1A2E;
+            --light: #E6E6E6;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--dark);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 245, 160, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 217, 245, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 46, 99, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .creative-card {
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .creative-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+
+        .btn-creative {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-creative::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-creative:hover::before {
+            left: 100%;
+        }
+
+        .btn-creative:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 245, 160, 0.3);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 2rem;
+            color: var(--dark);
+            box-shadow: 0 10px 20px rgba(0, 245, 160, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-icon:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 15px 30px rgba(0, 245, 160, 0.3);
+        }
+
+        .heading-dark {
+            color: var(--light);
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+
+        .heading-dark::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .heading-dark:hover::after {
+            transform: scaleX(1);
+        }
+
+        .input-creative {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .input-creative:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 245, 160, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .loading-creative {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+        }
+
+        .loading-creative::before,
+        .loading-creative::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-creative::after {
+            border-top-color: var(--secondary);
+            animation-delay: -0.5s;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .floating-creative {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .result-creative {
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 30px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        .result-creative:hover {
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 245, 160, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4">
+    <div class="container mx-auto max-w-5xl">
+        <!-- Header Section -->
+        <div class="text-center mb-16 floating-creative">
+            <h1 class="text-6xl font-bold heading-dark mb-6 glow-text">Study Note Summarizer</h1>
+            <p class="text-xl text-gray-300">Transform your study notes into concise summaries, key concepts, and quiz questions</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="creative-card p-10 mb-12 animate__animated animate__fadeIn">
+            <div class="mb-8">
+                <label for="notes" class="block text-xl font-semibold heading-dark mb-4">Enter your study notes:</label>
+                <textarea id="notes" rows="10" class="input-creative w-full" placeholder="Paste your study notes here..."></textarea>
+            </div>
+            
+            <button id="summarizeBtn" class="btn-creative w-full text-lg">
+                Generate Summary
+            </button>
+            
+            <div class="loading mt-8 text-center hidden">
+                <div class="loading-creative"></div>
+                <p class="mt-4 text-gray-300 text-lg">Processing your notes...</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="result" class="result-creative hidden animate__animated animate__fadeIn">
+            <h2 class="text-4xl font-bold heading-dark mb-8">Your Summary</h2>
+            <div class="bg-black bg-opacity-30 p-8 rounded-2xl">
+                <div id="summaryContent" class="prose max-w-none text-gray-300"></div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+            <div class="creative-card p-8 text-center animate__animated animate__fadeInUp">
+                <div class="feature-icon mb-6">📝</div>
+                <h3 class="text-2xl font-bold heading-dark mb-4">Concise Summaries</h3>
+                <p class="text-gray-400">Get clear and concise summaries of your study notes</p>
+            </div>
+            <div class="creative-card p-8 text-center animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="feature-icon mb-6">🔑</div>
+                <h3 class="text-2xl font-bold heading-dark mb-4">Key Concepts</h3>
+                <p class="text-gray-400">Extract important concepts from your notes</p>
+            </div>
+            <div class="creative-card p-8 text-center animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="feature-icon mb-6">❓</div>
+                <h3 class="text-2xl font-bold heading-dark mb-4">Quiz Questions</h3>
+                <p class="text-gray-400">Generate practice questions to test your knowledge</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-16 text-gray-400">
+            <p class="text-lg">Powered by Gemini AI | Study smarter, not harder</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('summarizeBtn').addEventListener('click', async () => {
+            const notes = document.getElementById('notes').value;
+            const loading = document.querySelector('.loading');
+            const result = document.getElementById('result');
+            const summaryContent = document.getElementById('summaryContent');
+            
+            if (!notes) {
+                alert('Please enter some study notes first!');
+                return;
+            }
+            
+            loading.classList.remove('hidden');
+            result.classList.add('hidden');
+            
+            try {
+                const response = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ notes }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const formattedResponse = data.response
+                        .replace(/\n/g, '<br>')
+                        .replace(/SUMMARY:/g, '<h3 class="text-3xl font-bold heading-dark mt-8 mb-4">SUMMARY:</h3>')
+                        .replace(/KEY CONCEPTS:/g, '<h3 class="text-3xl font-bold heading-dark mt-8 mb-4">KEY CONCEPTS:</h3>')
+                        .replace(/QUIZ QUESTIONS:/g, '<h3 class="text-3xl font-bold heading-dark mt-8 mb-4">QUIZ QUESTIONS:</h3>')
+                        .replace(/- /g, '<li class="ml-6 mb-2 text-gray-300">')
+                        .replace(/\d\. /g, '<li class="ml-6 mb-2 text-gray-300">');
+                    
+                    summaryContent.innerHTML = formattedResponse;
+                    result.classList.remove('hidden');
+                    result.classList.add('animate__fadeIn');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('An error occurred while processing your request.');
+                console.error('Error:', error);
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 
